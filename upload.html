@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Face Mask Detection - Image Upload</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #1a1c20 0%, #2d3436 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .header {
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(45deg, #00e6e6, #00ff9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .subtitle {
+      color: #a0a0a0;
+      margin-bottom: 2rem;
+    }
+
+    .nav-link {
+      color: #00e6e6;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      transition: 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: #00ff9d;
+    }
+
+    .nav-link::before {
+      content: "←";
+      margin-right: 0.5rem;
+    }
+
+    .upload-container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 2rem;
+    }
+
+    .drop-zone {
+      border: 2px dashed rgba(0, 230, 230, 0.3);
+      border-radius: 10px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .drop-zone:hover {
+      border-color: #00e6e6;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .drop-zone.dragover {
+      border-color: #00ff9d;
+      background: rgba(0, 255, 157, 0.05);
+    }
+
+    #preview-image {
+      max-width: 100%;
+      height: auto;
+      max-height: 400px;
+      border-radius: 10px;
+      margin: 1rem 0;
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #00e6e6;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      background: linear-gradient(45deg, #00e6e6, #00ff9d);
+      color: #003333;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      font-weight: 600;
+      display: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 230, 230, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    #result {
+      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      padding: 1rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      display: inline-block;
+      min-width: 300px;
+    }
+
+    .no-mask {
+      color: #ff4444;
+      animation: pulse 1s infinite;
+      background: rgba(255, 68, 68, 0.1) !important;
+      border: 1px solid rgba(255, 68, 68, 0.3);
+    }
+
+    .has-mask {
+      color: #00ff9d;
+      background: rgba(0, 255, 157, 0.1) !important;
+      border: 1px solid rgba(0, 255, 157, 0.3);
+    }
+
+    .loading {
+      display: none;
+      margin: 1rem auto;
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0, 230, 230, 0.3);
+      border-radius: 50%;
+      border-top-color: #00e6e6;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="/" class="nav-link">Back to Home</a>
+      <h1>Image Upload Detection</h1>
+      <p class="subtitle">Upload an image to check for face masks</p>
+    </div>
+
+    <div class="upload-container">
+      <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click();">
+        <div class="upload-icon">🖼️</div>
+        <p>Click or drag and drop an image here</p>
+        <input type="file" id="fileInput" class="file-input" accept="image/*">
+      </div>
+      <img id="preview-image" src="#" alt="Preview">
+      <button class="btn" id="checkBtn">Check Image</button>
+    </div>
+
+    <div class="loading" id="loading"></div>
+    <div id="result"></div>
+  </div>
+
+  <!-- Audio element for buzzer sound -->
+  <audio id="buzzer" preload="auto">
+    <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+  </audio>
+
+  <script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewImage = document.getElementById('preview-image');
+    const checkBtn = document.getElementById('checkBtn');
+    const buzzer = document.getElementById('buzzer');
+    const resultDiv = document.getElementById('result');
+    const loadingDiv = document.getElementById('loading');
+
+    // Set buzzer volume to maximum (1.0)
+    buzzer.volume = 1.0;
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    // Highlight drop zone when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    // Handle dropped files
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    function highlight(e) {
+      dropZone.classList.add('dragover');
+    }
+
+    function unhighlight(e) {
+      dropZone.classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      handleFiles(files);
+    }
+
+    fileInput.addEventListener('change', function(e) {
+      handleFiles(this.files);
+    });
+
+    function handleFiles(files) {
+      if (files.length > 0) {
+        const file = files[0];
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+            checkBtn.style.display = 'inline-block';
+          }
+          reader.readAsDataURL(file);
+        } else {
+          alert('Please upload an image file');
+        }
+      }
+    }
+
+    function showLoading() {
+      loadingDiv.style.display = 'block';
+      resultDiv.style.display = 'none';
+      checkBtn.disabled = true;
+    }
+
+    function hideLoading() {
+      loadingDiv.style.display = 'none';
+      resultDiv.style.display = 'block';
+      checkBtn.disabled = false;
+    }
+
+    function playBuzzer() {
+      buzzer.currentTime = 0;
+      buzzer.play().catch(e => console.log('Audio play failed:', e));
+      
+      resultDiv.classList.add('no-mask');
+      
+      setTimeout(() => {
+        buzzer.pause();
+      }, 2000);
+    }
+
+    checkBtn.addEventListener('click', function() {
+      const file = fileInput.files[0];
+      if (!file) {
+        resultDiv.textContent = 'Please select an image first';
+        return;
+      }
+
+      showLoading();
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch('/predict', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        hideLoading();
+        resultDiv.textContent = data.result;
+        
+        if (data.result.includes('❌ No Mask')) {
+          resultDiv.classList.add('no-mask');
+          resultDiv.classList.remove('has-mask');
+          playBuzzer();
+        } else {
+          resultDiv.classList.remove('no-mask');
+          resultDiv.classList.add('has-mask');
+        }
+      })
+      .catch(error => {
+        hideLoading();
+        resultDiv.textContent = 'Prediction failed.';
+        resultDiv.className = '';
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html> 
