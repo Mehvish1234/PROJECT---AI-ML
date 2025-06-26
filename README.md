@@ -104,23 +104,6 @@ The system uses a pre-trained deep learning model (`face_mask_model_updated.h5`)
 - Provides binary classification (mask/no mask)
 - Returns confidence scores for predictions
 
-## Browser Compatibility
-
-- Google Chrome (recommended)
-- Mozilla Firefox
-- Microsoft Edge
-- Safari
-- Opera
-
-## Known Limitations
-
-- Webcam detection requires camera permissions
-- Best results with well-lit, clear images
-- May have reduced accuracy with:
-  - Poor lighting conditions
-  - Blurry images
-  - Multiple faces in one image
-  - Non-standard mask types
 
 ## Contributing
 
