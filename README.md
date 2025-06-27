@@ -1,4 +1,6 @@
 # Face Mask Detection System
+FULL WORKING VIDEO OF THE MODEL :
+[FULL VIDEO LINK ](https://drive.google.com/file/d/1ud21xv2-D9jPkTkRBPh0sZhbcRNR5VbP/view?usp=drive_link)
 
 A real-time face mask detection system built with Flask and TensorFlow. This web application provides two methods for detecting whether someone is wearing a face mask: real-time webcam detection and image upload analysis.
 
